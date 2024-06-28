@@ -38,3 +38,14 @@ jobs:
       run: |
         echo "@Rossy995" | docker login -u "piusiyke" --password-stdin
         docker push piusiyke/nodejs-app
+        
+    - name: Set up kubectl
+      run: |
+        curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+        chmod +x kubectl
+        sudo mv kubectl /usr/local/bin/
+    
+    - name: Apply Kubernetes manifests
+      env:
+        KUBECONFIG: ${{ secrets.KUBECONFIG }}
+      run: kubectl apply -f k8s/service.yml
