@@ -32,12 +32,9 @@ jobs:
       run: ls -la
 
     - name: Build Docker image
-      run: docker build . -t your-dockerhub-username/nodejs-app
+      run: docker build . -t piusiyke/nodejs-app
 
     - name: Push Docker image
-      env:
-        DOCKER_USERNAME: ${{ secrets.piusiyke }}
-        DOCKER_PASSWORD: ${{ secrets.@Rossy995 }}
       run: |
-        echo "${{ secrets.@Rossy995 }}" | docker login -u "${{ secrets.piusiyke }}" --password-stdin
-        docker push your-dockerhub-username/nodejs-app
+        echo "@Rossy995" | docker login -u "piusiyke" --password-stdin
+        docker push piusiyke/nodejs-app
