@@ -1,0 +1,51 @@
+name: Node.js CI/CD
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '14'
+
+    - name: Install dependencies
+      run: npm install
+
+    # name: Run tests
+     # run: npm test
+
+    - name: List directory contents
+      run: ls -la
+
+    - name: Build Docker image
+      run: docker build . -t piusiyke/nodejs-app
+
+    - name: Push Docker image
+      run: |
+        echo "@Rossy995" | docker login -u "piusiyke" --password-stdin
+        docker push piusiyke/nodejs-app
+        
+    - name: Set up kubectl
+      run: |
+        curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+        chmod +x kubectl
+        sudo mv kubectl /usr/local/bin/
+    
+    - name: Apply Kubernetes manifests
+      env:
+        KUBECONFIG: ${{ secrets.KUBECONFIG }}
+      run: kubectl apply -f k8s/service.yml
